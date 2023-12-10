@@ -17,7 +17,6 @@ class DesertMap {
     [[nodiscard]] std::vector<std::string> get_locations_ending_with(char c) const;
     [[nodiscard]] Source_And_LR_Map extract_map() const;
 public:
-    [[nodiscard]] unsigned cycle_length(const std::string& start, size_t start_ix_of_move_cycle = 0);
     [[nodiscard]] unsigned steps(std::string pos, bool ghost) const;
     [[nodiscard]] uint64_t part_2_solution() const;
     explicit DesertMap(std::istream& data);
