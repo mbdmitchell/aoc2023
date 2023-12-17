@@ -8,7 +8,6 @@ using AshRockMap = std::vector<std::vector<char>>;
 
 std::vector<AshRockMap> split(const AshRockMap& map) {
     std::vector<AshRockMap> split_input;
-
     AshRockMap current;
     for (const auto& line : map) {
         if (!line.empty()) {
@@ -19,12 +18,11 @@ std::vector<AshRockMap> split(const AshRockMap& map) {
             current.clear();
         }
     }
-
     split_input.push_back(current);
     return split_input;
 }
-AshRockMap tokenize(const std::vector<std::string> &lines_of_data) {
 
+AshRockMap tokenize(const std::vector<std::string> &lines_of_data) {
     AshRockMap tokenized_lines_of_data;
     for (const auto& line : lines_of_data) {
         const std::vector<char> tokens = [&](){
@@ -36,7 +34,6 @@ AshRockMap tokenize(const std::vector<std::string> &lines_of_data) {
         }();
         tokenized_lines_of_data.push_back(tokens);
     }
-
     return tokenized_lines_of_data;
 }
 
@@ -52,8 +49,8 @@ template<typename T>
 
 std::vector<AshRockMap> parse(std::string_view file_name) {
     std::ifstream data(file_name);
-    std::vector<AshRockMap> m = split(tokenize(vectorize<std::string>(data)));
-    return m;
+    std::vector<AshRockMap> map = split(tokenize(vectorize<std::string>(data)));
+    return map;
 }
 
 // HELPERS
@@ -62,18 +59,18 @@ bool one_off_row_match(size_t row_ix_a, size_t row_ix_b, const AshRockMap& map) 
     const auto& row_a = map[row_ix_a];
     const auto& row_b = map[row_ix_b];
 
-    auto first_it = std::mismatch(cbegin(row_a), cend(row_a), cbegin(row_b)).first;
-    auto last_it = std::mismatch(crbegin(row_a), crend(row_a), crbegin(row_b)).first.base();
-    return std::distance(first_it, last_it) == 1;
-}
-bool one_off_col_match(size_t col_ix_a, size_t col_ix_b, const AshRockMap& map) {
-    unsigned no_of_mismatches = 0;
-    for (size_t r = 0; r < map.size(); ++r) {
-        if (map[r][col_ix_a] != map[r][col_ix_b]) {
-            ++no_of_mismatches;
+    unsigned mismatchCount = 0;
+    for (size_t i = 0; i < row_a.size(); ++i) {
+        if (row_a[i] != row_b[i] && ++mismatchCount > 1) { // NB: ++mismatchCount iff row_a[i] != row_b[i] (early exit)
+            return false;
         }
     }
-    return no_of_mismatches == 1;
+    return mismatchCount == 1;
+}
+bool one_off_col_match(size_t col_ix_a, size_t col_ix_b, const AshRockMap& map) {
+    return std::count_if(cbegin(map), cend(map), [&](const auto& row) {
+        return row[col_ix_a] != row[col_ix_b];
+    }) == 1;
 }
 
 bool compare_verticals(size_t ix_a, size_t ix_b, const AshRockMap& map) {
@@ -86,11 +83,9 @@ bool compare_verticals(size_t ix_a, size_t ix_b, const AshRockMap& map) {
 };
 
 bool is_horizontal_reflection(size_t starting_ix, const AshRockMap& map, unsigned smudges_remaining = 0) {
-
     size_t upper = starting_ix-1;
     size_t lower = starting_ix+2;
-
-    while (upper != std::numeric_limits<size_t>::max() && lower < map.size()) {
+    while (upper != std::numeric_limits<size_t>::max() && lower < map.size()) { // upper: ... -> 1 -> 0 -> num_limit::max()
         if (map[upper] != map[lower]) {
             if (smudges_remaining == 0) {
                 return false;
@@ -102,17 +97,16 @@ bool is_horizontal_reflection(size_t starting_ix, const AshRockMap& map, unsigne
                 return false;
             }
         }
-
         --upper;
         ++lower;
     }
     return smudges_remaining == 0;
 }
-bool is_vertical_reflection(size_t starting_ix, const AshRockMap& map, unsigned smudges_remaining = 0) {
 
+bool is_vertical_reflection(size_t starting_ix, const AshRockMap& map, unsigned smudges_remaining = 0) {
     size_t left = starting_ix-1;
     size_t right = starting_ix+2;
-    while (left != std::numeric_limits<size_t>::max() && right < map.front().size()) {
+    while (left != std::numeric_limits<size_t>::max() && right < map.front().size()) { // left: ... -> 1 -> 0 -> num_limit::max()
         if (!compare_verticals(left, right, map)) {
             if (smudges_remaining == 0) {
                 return false;
@@ -140,7 +134,6 @@ std::vector<size_t> get_upper_ix_of_all_near_horizontal_twins(const AshRockMap& 
     return upper_ixes;
 }
 std::vector<size_t> get_left_ix_of_all_near_vertical_twins(const AshRockMap& map) {
-
     std::vector<size_t> left_ixes;
     for (size_t col = 0; col < map.front().size()-1; ++col) {
         if (one_off_col_match(col, col+1, map)) {
@@ -150,9 +143,7 @@ std::vector<size_t> get_left_ix_of_all_near_vertical_twins(const AshRockMap& map
     return left_ixes;
 }
 std::vector<size_t> get_upper_ix_of_horizontal_reflections(const std::vector<size_t>& candidates, const AshRockMap& map, unsigned smudges_remaining = 0) {
-
     std::vector<size_t> successful;
-
     for (const auto& c : candidates) {
         if (is_horizontal_reflection(c, map, smudges_remaining)) {
             successful.push_back(c);
@@ -161,9 +152,7 @@ std::vector<size_t> get_upper_ix_of_horizontal_reflections(const std::vector<siz
     return successful;
 }
 std::vector<size_t> get_left_ix_of_vertical_reflections(const std::vector<size_t>& candidates, const AshRockMap& map, unsigned smudges_remaining = 0) {
-
     std::vector<size_t> successful;
-
     for (const auto& c : candidates) {
         if (is_vertical_reflection(c, map, smudges_remaining)) {
             successful.push_back(c);
@@ -181,7 +170,6 @@ std::vector<size_t> get_upper_ix_of_all_horizontal_twins(const AshRockMap& map) 
     return upper_ixes;
 }
 std::vector<size_t> get_left_ix_of_all_vertical_twins(const AshRockMap& map) {
-
     std::vector<size_t> left_ixes;
     for (size_t col = 0; col < map.front().size()-1; ++col) {
         if (compare_verticals(col, col+1, map)) {
@@ -202,8 +190,8 @@ ReflectionInfo calc_ReflectionInfo(const AshRockMap& map) {
     const auto vertical_candidates = get_left_ix_of_all_vertical_twins(map);
     const auto horizontal_candidates = get_upper_ix_of_all_horizontal_twins(map);
     return {
-            .left_ix_of_vertical_reflection = get_left_ix_of_vertical_reflections(vertical_candidates, map),
-            .upper_ix_of_horizontal_reflection = get_upper_ix_of_horizontal_reflections(horizontal_candidates, map)
+        .left_ix_of_vertical_reflection = get_left_ix_of_vertical_reflections(vertical_candidates, map),
+        .upper_ix_of_horizontal_reflection = get_upper_ix_of_horizontal_reflections(horizontal_candidates, map)
     };
 }
 ReflectionInfo calc_smudged_ReflectionInfo(const AshRockMap& map) {
@@ -212,17 +200,21 @@ ReflectionInfo calc_smudged_ReflectionInfo(const AshRockMap& map) {
     const auto col_twins = get_left_ix_of_all_vertical_twins(map);
     const auto row_twins = get_upper_ix_of_all_horizontal_twins(map);
 
-    std::vector<size_t> smudgey_rows = get_upper_ix_of_horizontal_reflections(near_row_twins, map, 0);
-    std::vector<size_t> smudgey_rows2 = get_upper_ix_of_horizontal_reflections(row_twins, map, 1);
-    smudgey_rows.insert(end(smudgey_rows), std::make_move_iterator(begin(smudgey_rows2)), std::make_move_iterator(end(smudgey_rows2)));
+    auto append_reflections = [](std::vector<size_t>& base, const std::vector<size_t>& reflections) {
+        base.insert(base.end(), reflections.begin(), reflections.end());
+    };
 
-    std::vector<size_t> smudgey_cols = get_left_ix_of_vertical_reflections(near_col_twins, map, 0);
-    std::vector<size_t> smudgey_cols2 = get_left_ix_of_vertical_reflections(col_twins, map, 1);
-    smudgey_cols.insert(end(smudgey_cols), std::make_move_iterator(begin(smudgey_cols2)), std::make_move_iterator(end(smudgey_cols2)));
+    std::vector<size_t> smudgey_rows;
+    append_reflections(smudgey_rows, get_upper_ix_of_horizontal_reflections(near_row_twins, map, 0));
+    append_reflections(smudgey_rows, get_upper_ix_of_horizontal_reflections(row_twins, map, 1));
+
+    std::vector<size_t> smudgey_cols;
+    append_reflections(smudgey_cols, get_left_ix_of_vertical_reflections(near_col_twins, map, 0));
+    append_reflections(smudgey_cols, get_left_ix_of_vertical_reflections(col_twins, map, 1));
 
     return {
-        .left_ix_of_vertical_reflection = smudgey_cols,
-        .upper_ix_of_horizontal_reflection = smudgey_rows
+        .left_ix_of_vertical_reflection = std::move(smudgey_cols),
+        .upper_ix_of_horizontal_reflection = std::move(smudgey_rows)
     };
 }
 
@@ -230,23 +222,24 @@ ReflectionInfo calc_smudged_ReflectionInfo(const AshRockMap& map) {
 // SUMMARIZE
 
 unsigned summarize(const ReflectionInfo& info) {
-    unsigned result = 0;
-    for (const auto& col_ix : info.left_ix_of_vertical_reflection) {
-        result += col_ix + 1;
-    }
-    for (const auto& row_ix : info.upper_ix_of_horizontal_reflection) {
-        result += (row_ix + 1) * 100;
-    }
-    return result;
+    const auto& vertical_reflections = info.left_ix_of_vertical_reflection;
+    const unsigned verticalSum = std::accumulate(
+            begin(vertical_reflections), end(vertical_reflections), 0,
+            [](unsigned acc, const auto& col_ix) { return acc + col_ix + 1; }
+    );
+
+    const auto& horizontal_reflections = info.upper_ix_of_horizontal_reflection;
+    const unsigned horizontalSum = std::accumulate(
+            begin(horizontal_reflections), end(horizontal_reflections), 0,
+            [](unsigned acc, const auto& row_ix) { return acc + (row_ix + 1) * 100; }
+    );
+
+    return verticalSum + horizontalSum;
 }
 
 unsigned map_to_num(const AshRockMap& map, bool is_smudged = false) {
-    if (!is_smudged){
-        return summarize(calc_ReflectionInfo(map));
-    }
-    else {
-        return summarize(calc_smudged_ReflectionInfo(map));
-    }
+    const ReflectionInfo info = is_smudged ? calc_smudged_ReflectionInfo(map) : calc_ReflectionInfo(map);
+    return summarize(info);
 }
 
 // SOLUTIONS
