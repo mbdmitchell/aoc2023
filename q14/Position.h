@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstddef> // for size_t
 #include <gsl/gsl>
 
 struct Position {

@@ -2,8 +2,8 @@
 
 #include <boost/algorithm/string/classification.hpp> // for boost::is_any_of
 #include <boost/algorithm/string/split.hpp> // for boost::split
-#include <string>
 #include <fstream>
+#include <string>
 
 template<typename T>
 std::vector<T> vectorize(std::istream& is) {

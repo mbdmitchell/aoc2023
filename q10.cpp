@@ -1,9 +1,10 @@
-#include <iostream>
-#include <fstream>
-#include <queue>
-#include <map>
 #include <cassert>
+#include <fmt/format.h>
+#include <fstream>
+#include <iostream>
+#include <map>
 #include <numeric>
+#include <queue>
 
 // TYPES
 
@@ -53,6 +54,9 @@ template<typename T>
 
 SheepMap parse(std::string_view file_name) {
     std::ifstream data(file_name);
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
     return tokenize(vectorize<std::string>(data));
 }
 
@@ -249,6 +253,7 @@ unsigned calc_part_2(const SheepMap& map) {
 
 int main() {
     const SheepMap map = parse("../map.txt");
-    std::cout << calc_part_1(map) << '\n' << calc_part_2(map) << '\n';
+    fmt::print("Part 1: {}\n", calc_part_1(map));
+    fmt::print("Part 2: {}\n", calc_part_2(map));
     return 0;
 }

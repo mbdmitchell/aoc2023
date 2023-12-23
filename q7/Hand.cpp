@@ -38,12 +38,11 @@ Hand::Kind Hand::calc_kind(const CardCount &highest, const CardCount &second_hig
 }
 
 Hand::Kind Hand::calc_kind(const Part *move_strategy) const {
-    std::array<CardCount, 13> count = calc_card_count();
+    const std::array<CardCount, 13> count = calc_card_count();
     return move_strategy->best_move(count);
 }
 
 Hand::Hand(std::string_view hand, const Part *move_strategy) : hand{hand}, kind{calc_kind(move_strategy)} {}
-
 
 Hand::Kind P2::best_move(std::array<CardCount, 13> card_count) const {
 
@@ -53,8 +52,9 @@ Hand::Kind P2::best_move(std::array<CardCount, 13> card_count) const {
         return cc.type == 'J';
     };
 
-    const auto j_count = std::ranges::find_if(card_count, [&](const CardCount& cc) { return is_wildcard(cc); })->count; // what if no j's??????
-
+    const auto j_count = std::ranges::find_if(card_count, [&](const CardCount& cc) {
+        return is_wildcard(cc);
+    })->count;
     const auto highest_not_j_iter = std::find_if_not(crbegin(card_count), crend(card_count), [&](const CardCount& cc) {
         return is_wildcard(cc);
     });
@@ -72,11 +72,12 @@ P2::P2() : Part("J23456789TQKA") {}
 
 Hand::Kind P1::best_move(std::array<CardCount, 13> card_count) const {
 
-    std::sort(begin(card_count), end(card_count), [](const CardCount& a, const CardCount& b){ return a.count < b.count; });
+    std::sort(begin(card_count), end(card_count), [](const CardCount& a, const CardCount& b) {
+        return a.count < b.count;
+    });
 
     const auto highest = *(card_count.cend() - 1);
     const auto second_highest = *(card_count.cend() - 2);
-
     return Hand::calc_kind(highest, second_highest);
 }
 
@@ -87,6 +88,7 @@ bool Part::compare(const Hand &a, const Hand &b) const {
     if (a.get_kind() != b.get_kind()) {
         return a.get_kind() < b.get_kind();
     }
+
     const auto& a_hand = a.get_hand();
     const auto& b_hand = b.get_hand();
 
@@ -98,4 +100,6 @@ bool Part::compare(const Hand &a, const Hand &b) const {
     return false;
 }
 
-bool operator<(const CardCount &a, const CardCount &b) { return a.count < b.count; }
+bool operator<(const CardCount &a, const CardCount &b) {
+    return a.count < b.count;
+}

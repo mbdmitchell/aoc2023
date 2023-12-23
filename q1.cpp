@@ -1,9 +1,11 @@
-#include <iostream>
+#include <cassert>
+#include <fmt/format.h>
 #include <fstream>
-#include <string>
+#include <gsl/gsl>
+#include <iostream>
 #include <map>
 #include <numeric>
-#include <cassert>
+#include <string>
 
 const std::map<std::string, int> word_to_int = {{"one", 1}, {"two", 2}, {"three", 3}, {"four", 4}, {"five", 5}, {"six", 6}, {"seven", 7}, {"eight", 8}, {"nine", 9}};
 const std::vector<std::string> number_words = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
@@ -29,7 +31,7 @@ Info n_most_digit_info(const std::string& row, Compare comp) {
 
     return {
         .pos = max_digit,
-        .val = (max_digit == row.cend()) ? -1 : *max_digit - '0'
+        .val = (max_digit == cend(row)) ? -1 : *max_digit - '0'
     };
 
 }
@@ -115,8 +117,8 @@ std::vector<T> vectorize(std::istream& is) {
 int main() {
 
     std::ifstream data("./data.txt");
-    if (data.bad()) {
-        throw std::ifstream::failure("Unable to open file");
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
     }
 
     const std::vector<std::string> lines = vectorize<std::string>(data);
@@ -129,8 +131,8 @@ int main() {
         return acc + 10 * leftmost(l) + rightmost(l);
     });
 
-    std::cout << part_1 << '\n';
-    std::cout << part_2 << '\n';
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
 
     return 0;
 }

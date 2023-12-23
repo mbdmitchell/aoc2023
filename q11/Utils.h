@@ -1,7 +1,8 @@
 #pragma once
-#include <vector>
-#include <iostream>
+
 #include <fstream>
+#include <iostream>
+#include <vector>
 
 using UniverseMap = std::vector<std::vector<char>>;
 using MultiplierMap = std::vector<std::vector<int>>;

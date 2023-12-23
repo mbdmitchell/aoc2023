@@ -19,18 +19,22 @@ class Almanac {
 
     [[nodiscard]] std::vector<unsigned long> calc_seeds_old() const;
     [[nodiscard]] std::vector<Interval> calc_seeds_new() const;
-    [[nodiscard]] static std::vector<Interval> calc_seeds_that_map(const std::vector<Interval>& seed_ranges, const AlmanacMap& almanac_map);
-    [[nodiscard]] static std::vector<Interval> calc_seeds_that_map(const std::vector<Interval>& seed_ranges, const std::vector<Interval>& map_vec);
+    [[nodiscard]] static std::vector<Interval> calc_seeds_that_map(const std::vector<Interval>& seed_ranges,
+                                                                   const AlmanacMap& almanac_map);
+    [[nodiscard]] static std::vector<Interval> calc_seeds_that_map(const std::vector<Interval>& seed_ranges,
+                                                                   const std::vector<Interval>& map_vec);
 
     [[nodiscard]] std::vector<Source_Destination_Range> get_x_almanac_map(const std::string& first_token_of_title) const;
 
     // conversion
     [[nodiscard]] static std::vector<Interval> AlmanacMap_to_IntervalVector(const AlmanacMap& almanac_map);
-    [[nodiscard]] static std::vector<Interval> split_seed_ranges_based_on_map(const std::vector<Interval>& seed_ranges, const AlmanacMap& almanac_map) ;
+    [[nodiscard]] static std::vector<Interval> split_seed_ranges_based_on_map(const std::vector<Interval>& seed_ranges,
+                                                                              const AlmanacMap& almanac_map);
 
     // passing through maps
     [[nodiscard]] static unsigned long loc_to_loc(unsigned long thing, const AlmanacMap& map);
-    [[nodiscard]] static std::vector<Interval> pass_ranges_through_map(const std::vector<Interval>& ranges, const Almanac::AlmanacMap &almanac_map);
+    [[nodiscard]] static std::vector<Interval> pass_ranges_through_map(const std::vector<Interval>& ranges,
+                                                                       const Almanac::AlmanacMap &almanac_map);
 
 public:
     explicit Almanac(std::istream& data);

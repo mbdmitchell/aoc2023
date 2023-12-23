@@ -1,6 +1,7 @@
-#include <iostream>
-#include <fstream>
 #include <algorithm>
+#include <fmt/format.h>
+#include <fstream>
+#include <iostream>
 #include <numeric>
 #include <set>
 
@@ -162,8 +163,8 @@ std::vector<T> vectorize(std::ifstream& is) {
 int main() {
 
     std::ifstream data("../data.txt");
-    if (data.bad()) {
-        throw std::ifstream::failure("Unable to open file");
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
     }
 
     const std::vector<NumData> nums = [&](){
@@ -171,12 +172,12 @@ int main() {
         return extract_ordered_num_data(lines);
     }();
 
-    const int part_1_solution = std::accumulate(cbegin(nums), cend(nums), 0, [&](int acc, const NumData& nd) {
+    const int part_1 = std::accumulate(cbegin(nums), cend(nums), 0, [&](int acc, const NumData& nd) {
         const int val = nd.is_valid ? nd.num : 0;
         return acc + val;
     });
 
-    const int part_2_solution = [&](){
+    const int part_2 = [&](){
         int running_total = 0;
 
         const auto start = std::find_if_not(cbegin(nums), cend(nums), [&](const auto& n){
@@ -191,8 +192,8 @@ int main() {
         return running_total;
     }();
 
-    std::cout << part_1_solution << '\n';
-    std::cout << part_2_solution << '\n';
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
 
     return 0;
 }

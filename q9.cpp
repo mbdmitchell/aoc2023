@@ -1,8 +1,9 @@
-#include <iostream>
-#include <numeric>
-#include <fstream>
 #include <boost/algorithm/string/classification.hpp> // for boost::is_any_of
 #include <boost/algorithm/string/split.hpp> // for boost::split
+#include <fmt/format.h>
+#include <fstream>
+#include <iostream>
+#include <numeric>
 
 template<typename T>
 [[nodiscard]] std::vector<T> vectorize(std::ifstream& is) {
@@ -42,6 +43,9 @@ template<typename T>
 
 std::vector<std::vector<int>> parse(std::string_view file_name) {
     std::ifstream data(file_name);
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
     return tokenize(vectorize<std::string>(data));
 }
 
@@ -64,13 +68,15 @@ enum class End {FRONT, BACK};
 int main() {
     const auto sequences = parse("../sequences.txt");
 
-    const auto part_1_solution = std::accumulate(cbegin(sequences), cend(sequences), 0, [](int acc, const auto& seq){
+    const auto part_1 = std::accumulate(cbegin(sequences), cend(sequences), 0, [](int acc, const auto& seq){
         return acc + predict_next_num_in_sequence(seq, End::BACK);
     });
-    const auto part_2_solution = std::accumulate(cbegin(sequences), cend(sequences), 0, [](int acc, const auto& seq){
+    const auto part_2 = std::accumulate(cbegin(sequences), cend(sequences), 0, [](int acc, const auto& seq){
         return acc + predict_next_num_in_sequence(seq, End::FRONT);
     });
 
-    std::cout << part_1_solution << ' ' << part_2_solution;
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
+
     return 0;
 }

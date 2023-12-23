@@ -1,7 +1,9 @@
-#include <iostream>
-#include <fstream>
 #include <algorithm>
+#include <fmt/format.h>
+#include <fstream>
+#include <iostream>
 #include <numeric>
+
 using AshRockMap = std::vector<std::vector<char>>;
 
 // ORGANIZE DATA
@@ -49,6 +51,9 @@ template<typename T>
 
 std::vector<AshRockMap> parse(std::string_view file_name) {
     std::ifstream data(file_name);
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
     std::vector<AshRockMap> map = split(tokenize(vectorize<std::string>(data)));
     return map;
 }
@@ -258,7 +263,7 @@ unsigned part_2(const std::vector<AshRockMap>& maps) {
 int main() {
 
     const std::vector<AshRockMap> input = parse("../maps.txt");
-    std::cout << part_1(input) << '\n' << part_2(input);
-
+    fmt::print("Part 1: {}\n", part_1(input));
+    fmt::print("Part 2: {}\n", part_2(input));
     return 0;
 }

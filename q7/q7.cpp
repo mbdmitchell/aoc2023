@@ -1,3 +1,4 @@
+#include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 #include "Hand.h"
@@ -6,6 +7,9 @@
 [[nodiscard]] const unsigned long calc_result(Part&& part, std::string_view str) {
 
     std::ifstream data(str);
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
 
     const auto hands_and_bids = [&](){
         auto hands_and_bids = parse(data, &part);
@@ -32,7 +36,8 @@ int main() {
     const unsigned long part_1 = calc_result(P1(), "../hands.txt");
     const unsigned long part_2 = calc_result(P2(), "../hands.txt");
 
-    std::cout << part_1 << ' ' << part_2;
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
 
     return 0;
 }

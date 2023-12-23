@@ -1,6 +1,7 @@
 #include <boost/algorithm/string/classification.hpp> // for boost::is_any_of
 #include <boost/algorithm/string/split.hpp> // for boost::split
 #include <cassert>
+#include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -143,8 +144,8 @@ std::vector<int> calc_card_count(const std::vector<int>& initial_count, const st
 int main() {
 
     std::ifstream data("../data.txt");
-    if (data.bad()) {
-        throw std::ifstream::failure("Unable to open file");
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
     }
 
     const std::vector<Card> cards = convert_data(data);
@@ -155,8 +156,10 @@ int main() {
         return calc_card_count(initial_count, wins_on_card);
     }();
 
-    const int sol_1 = calc_total_score(cards);
-    const int sol_2 = std::accumulate(cbegin(card_count), cend(card_count), 0);
+    const int part_1 = calc_total_score(cards);
+    const int part_2 = std::accumulate(cbegin(card_count), cend(card_count), 0);
 
-    std::cout << sol_1 << ' ' << sol_2 << '\n';
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
+
 }

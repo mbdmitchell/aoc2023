@@ -1,12 +1,12 @@
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
 #include <boost/filesystem.hpp>
 #include <fmt/format.h>
-#include <gsl/gsl>
 #include <fstream>
+#include <gsl/gsl>
 #include <iostream>
 #include <numeric>
-#include <vector>
 #include <set>
+#include <vector>
 
 // Custom classes -- TODO: move to seperate files
 

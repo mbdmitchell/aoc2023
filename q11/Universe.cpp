@@ -2,6 +2,9 @@
 
 UniverseMap Universe::parse(std::string_view file_name) {
     std::ifstream data(file_name);
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
     UniverseMap m = tokenize(vectorize<std::string>(data));
     return m;
 }

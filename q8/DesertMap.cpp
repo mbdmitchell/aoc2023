@@ -1,6 +1,7 @@
-#include "DesertMap.h"
 #include <iostream>
 #include <numeric>
+
+#include "DesertMap.h"
 
 DesertMap::DesertMap(std::istream &data)
         : vectorize_data{vectorize<std::string>(data)}

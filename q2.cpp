@@ -1,7 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <numeric>
 #include <cassert>
+#include <fmt/format.h>
+#include <fstream>
+#include <iostream>
+#include <numeric>
 
 using std::literals::string_literals::operator""s;
 
@@ -90,13 +91,13 @@ bool is_valid(const RGB_Count& hand, const RGB_Count max) {
 int main() {
 
     std::ifstream data("../data.txt");
-    if (data.bad()) {
-        throw std::ifstream::failure("Unable to open file");
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
     }
     
     std::vector<std::string> lines = vectorize<std::string>(data);
 
-    const int answer1 = [&](){
+    const int part_1 = [&](){
 
         const RGB_Count no_of_cubes {12, 13, 14};
 
@@ -109,7 +110,7 @@ int main() {
 
     }();
 
-    const int answer2 = [&](){
+    const int part_2 = [&](){
         return std::accumulate(cbegin(lines), cend(lines), 0, [&](int acc, const std::string& line){
             const RGB_Count min_hand = calc_max_of_each_colour(line);
             const int power = min_hand.red * min_hand.green * min_hand.blue;
@@ -117,8 +118,8 @@ int main() {
         });
     }();
 
-    std::cout << answer1 << '\n';
-    std::cout << answer2 << '\n';
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
 
     return 0;
 }

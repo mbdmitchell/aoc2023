@@ -1,11 +1,11 @@
-#include <iostream>
-#include <fstream>
 #include <algorithm>
+#include <fmt/format.h>
+#include <fstream>
+#include <iostream>
 #include <numeric>
 #include <map>
-#include <utility>
 #include <unordered_set>
-#include <fmt/format.h>
+#include <utility>
 
 #include "Direction.h"
 #include "Position.h"
@@ -50,6 +50,9 @@ template<typename T>
 
 RockMap parse(std::string_view file_name) {
     std::ifstream data(file_name);
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
     RockMap map = tokenize(vectorize<std::string>(data));
     return map;
 }
@@ -322,8 +325,9 @@ unsigned part_2(RockMap map) {
 
 int main() {
 
-    RockMap map = parse("../rocks.txt");
-    std::cout << part_2(map);
+    const RockMap map = parse("../rocks.txt");
+    fmt::print("Part 1: {}\n", map);
+    fmt::print("Part 2: {}\n", map);
 
     return 0;
 }

@@ -1,7 +1,8 @@
-#include <iostream>
 #include <boost/algorithm/string/classification.hpp> // for boost::is_any_of
 #include <boost/algorithm/string/split.hpp> // for boost::split
 #include <fstream>
+#include <fmt/format.h>
+#include <iostream>
 #include <numeric>
 
 using Time = int;
@@ -64,8 +65,8 @@ int number_of_ways_to_beat_record(const std::pair<double, double>& range) {
 }
 
 std::pair<long, long> part_2_kerning_adjustment(const std::vector<std::pair<Time, Distance>>& time_dist_pairs) {
-    std::string time;
-    std::string distance;
+    std::string time{};
+    std::string distance{};
     for (const auto& p : time_dist_pairs) {
         time += std::to_string(static_cast<int>(p.first));
         distance += std::to_string(static_cast<int>(p.second));
@@ -76,7 +77,9 @@ std::pair<long, long> part_2_kerning_adjustment(const std::vector<std::pair<Time
 int main() {
 
     std::ifstream data("../times.txt");
-    if (data.bad()) { throw std::ifstream::failure("Unable to open file"); }
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
 
     const std::vector<std::pair<Time, Distance>> time_dist_pairs = parse(data);
 
@@ -89,7 +92,8 @@ int main() {
         return number_of_ways_to_beat_record(calc_poss_times(pair.first, pair.second));
     }();
 
-    std::cout << part_1 << ' ' << part_2;
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
 
     return 0;
 }

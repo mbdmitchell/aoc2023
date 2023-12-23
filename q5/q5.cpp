@@ -1,14 +1,14 @@
+#include <fmt/format.h>
 #include <fstream>
 #include <map>
 #include "Almanac.h"
 
 int main() {
 
-    /*std::ios_base::sync_with_stdio(false);
-    std::cin.tie(NULL);*/
-
     std::ifstream data("../almanac.txt");
-    if (data.bad()) { throw std::ifstream::failure("Unable to open file"); }
+    if (!data.is_open()) {
+        throw std::runtime_error("Unable to open file");
+    }
 
     const Almanac almanac {data};
 
@@ -24,8 +24,8 @@ int main() {
         })->lower();
     }();
 
-    std::cout << part_1 << '\n';
-    std::cout << part_2 << '\n';
+    fmt::print("Part 1: {}\n", part_1);
+    fmt::print("Part 2: {}\n", part_2);
 
     return 0;
 }
