@@ -69,7 +69,7 @@ using Box = std::vector<Lens>;
 bool is_valid_file(std::string_view file_path){
     namespace fs = boost::filesystem;
     if (!fs::exists(file_path) || !fs::is_regular_file(file_path)) {
-        std::cerr << fmt::format("File does not exist or is not a regular file: {}\n", file_path);
+        fmt::print(stderr, "File does not exist or is not a regular file: {}\n", file_path);
         return false;
     }
     return true;
@@ -81,7 +81,7 @@ std::vector<InitializationStep> parse(std::string_view file_path) {
 
     std::ifstream file(file_path.data());
     if (!file.is_open()) {
-        std::cerr << fmt::format("Unable to open file: {}\n", file_path);
+        fmt::print(stderr, "File not open: {}\n", file_path);
         return {};
     }
 

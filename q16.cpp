@@ -291,7 +291,7 @@ public:
 bool is_valid_file(std::string_view file_path){
     namespace fs = boost::filesystem;
     if (!fs::exists(file_path) || !fs::is_regular_file(file_path)) {
-        std::cerr << fmt::format("File does not exist or is not a regular file: {}\n", file_path);
+        fmt::print(stderr, "File does not exist or is not a regular file: {}\n", file_path);
         return false;
     }
     return true;
