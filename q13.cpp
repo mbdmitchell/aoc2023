@@ -90,13 +90,7 @@ bool is_horizontal_reflection(size_t starting_ix, const AshRockMap& map, unsigne
     size_t lower = starting_ix+2;
     while (upper != std::numeric_limits<size_t>::max() && lower < map.size()) { // upper: ... -> 1 -> 0 -> num_limit::max()
         if (map[upper] != map[lower]) {
-            if (smudges_remaining == 0) {
-                return false;
-            }
-            else if (one_off_row_match(upper, lower, map)) {
-                --smudges_remaining;
-            }
-            else {
+            if (smudges_remaining == 0 || !one_off_row_match(upper, lower, map)) {
                 return false;
             }
             --smudges_remaining;
@@ -111,15 +105,10 @@ bool is_vertical_reflection(size_t starting_ix, const AshRockMap& map, unsigned 
     size_t right = starting_ix+2;
     while (left != std::numeric_limits<size_t>::max() && right < map.front().size()) { // left: ... -> 1 -> 0 -> num_limit::max()
         if (!compare_verticals(left, right, map)) {
-            if (smudges_remaining == 0) {
+            if (smudges_remaining == 0 || !one_off_col_match(left, right, map)) {
                 return false;
             }
-            else if (one_off_col_match(left, right, map)) {
-                --smudges_remaining;
-            }
-            else {
-                return false;
-            }
+            --smudges_remaining;
         }
         --left;
         ++right;
