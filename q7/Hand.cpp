@@ -2,7 +2,7 @@
 
 std::array<CardCount, 13> Hand::calc_card_count() const {
     auto no_of_card_value = [&](char c) -> unsigned {
-        return std::count_if(cbegin(hand), cend(hand), [&](const char& hand_c){ return c == hand_c; });
+        return std::ranges::count_if(hand, [&](const char& hand_c){ return c == hand_c; });
     };
     return std::array<CardCount, 13> {
             CardCount{.count = no_of_card_value('2'), .type = '2'},
@@ -44,23 +44,19 @@ Hand::Kind Hand::calc_kind(const Part *move_strategy) const {
 
 Hand::Hand(std::string_view hand, const Part *move_strategy) : hand{hand}, kind{calc_kind(move_strategy)} {}
 
-Hand::Kind P2::best_move(std::array<CardCount, 13> card_count) const {
 
-    std::sort(begin(card_count), end(card_count), [](const CardCount& a, const CardCount& b){ return a.count < b.count; });
+Hand::Kind P2::best_move(std::array<CardCount, 13> card_count) const {
 
     auto is_wildcard = [](const CardCount& cc){
         return cc.type == 'J';
     };
 
-    const auto j_count = std::ranges::find_if(card_count, [&](const CardCount& cc) {
-        return is_wildcard(cc);
-    })->count;
-    const auto highest_not_j_iter = std::find_if_not(crbegin(card_count), crend(card_count), [&](const CardCount& cc) {
-        return is_wildcard(cc);
-    });
-    const auto second_highest_not_j_iter = std::find_if_not(highest_not_j_iter + 1, crend(card_count), [&](const CardCount& cc) {
-        return is_wildcard(cc);
-    });
+    const auto j_count = std::ranges::find_if(card_count, is_wildcard)->count;
+
+    std::ranges::sort(card_count, {}, &CardCount::count);
+
+    const auto highest_not_j_iter = std::find_if_not(crbegin(card_count), crend(card_count), is_wildcard);
+    const auto second_highest_not_j_iter = std::find_if_not(highest_not_j_iter + 1, crend(card_count), is_wildcard);
 
     const CardCount highest = {highest_not_j_iter->count + j_count, highest_not_j_iter->type};
     const CardCount second_highest = {second_highest_not_j_iter->count, second_highest_not_j_iter->type};
@@ -72,12 +68,11 @@ P2::P2() : Part("J23456789TQKA") {}
 
 Hand::Kind P1::best_move(std::array<CardCount, 13> card_count) const {
 
-    std::sort(begin(card_count), end(card_count), [](const CardCount& a, const CardCount& b) {
-        return a.count < b.count;
-    });
+    std::ranges::sort(card_count, {}, &CardCount::count);
 
     const auto highest = *(card_count.cend() - 1);
     const auto second_highest = *(card_count.cend() - 2);
+
     return Hand::calc_kind(highest, second_highest);
 }
 
@@ -88,7 +83,6 @@ bool Part::compare(const Hand &a, const Hand &b) const {
     if (a.get_kind() != b.get_kind()) {
         return a.get_kind() < b.get_kind();
     }
-
     const auto& a_hand = a.get_hand();
     const auto& b_hand = b.get_hand();
 
@@ -100,6 +94,4 @@ bool Part::compare(const Hand &a, const Hand &b) const {
     return false;
 }
 
-bool operator<(const CardCount &a, const CardCount &b) {
-    return a.count < b.count;
-}
+bool operator<(const CardCount &a, const CardCount &b) { return a.count < b.count; }

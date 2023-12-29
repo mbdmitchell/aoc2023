@@ -15,13 +15,13 @@ std::vector<Interval> Almanac::calc_seeds_new() const {
         Interval seed_range = {seeds_old[i], seeds_old[i] + seeds_old[i + 1] - 1};
         new_seeds.emplace_back(seed_range);
     }
-    std::sort(begin(new_seeds), end(new_seeds), [&](const auto& a, const auto& b){ return a.lower() < b.lower(); });
+    std::ranges::sort(new_seeds, {}, &Interval::lower);
     return new_seeds;
 }
 
 std::vector<Source_Destination_Range> Almanac::get_x_almanac_map(const std::string &first_token_of_title) const {
     std::vector<Source_Destination_Range> map;
-    const auto start = std::find_if(cbegin(tokenized_data), cend(tokenized_data), [&](const auto& sub_vec){
+    const auto start = std::ranges::find_if(tokenized_data, [&](const auto& sub_vec){
         return sub_vec.front() == first_token_of_title;
     }) + 1;
     const auto finish = std::find_if(start, cend(tokenized_data), [&](const auto& sub_vec){
@@ -37,7 +37,7 @@ std::vector<Source_Destination_Range> Almanac::get_x_almanac_map(const std::stri
         };
         map.push_back(sdr);
     }
-    std::sort(begin(map), end(map), [&](const auto& a, const auto& b){ return a.range.lower() < b.range.lower(); });
+    std::ranges::sort(new_seeds, {}, &Interval::lower);
     return map;
 }
 
@@ -98,7 +98,7 @@ std::vector<Interval> Almanac::split_seed_ranges_based_on_map(const std::vector<
             std::make_move_iterator(begin(seeds_that_dont_map)),
             std::make_move_iterator(end(seeds_that_dont_map))
         );
-        std::sort(begin(s), end(s), [&](const auto& a, const auto& b){ return a.lower() < b.lower(); });
+        std::ranges::sort(new_seeds, {}, &Interval::lower);
         return s;
     }();
 
@@ -137,7 +137,7 @@ std::vector<Interval> Almanac::AlmanacMap_to_IntervalVector(const Almanac::Alman
 std::vector<Interval> Almanac::seed_range_vector_to_location() const {
     std::vector<Interval> ranges = seeds_new;
     for (const auto& map : maps) {
-        std::sort(begin(ranges), end(ranges), [](const auto& a, const auto& b){ return a.lower() < b.lower(); });
+        std::ranges::sort(new_seeds, {}, &Interval::lower);
         ranges = split_seed_ranges_based_on_map(ranges, map);
         ranges = pass_ranges_through_map(ranges, map);
     }
@@ -151,7 +151,7 @@ Almanac::pass_ranges_through_map(const std::vector<Interval>& ranges, const Alma
 
     for (const auto& range : ranges){
 
-        auto map_match = std::find_if(cbegin(almanac_map), cend(almanac_map),[&](const Source_Destination_Range& sdr) {
+        auto map_match = std::ranges::find_if(almanac_map, [&](const Source_Destination_Range &sdr) {
             return boost::numeric::in(range.lower(), sdr.range); // NB: any num in `range` should work
         });
 
@@ -172,6 +172,6 @@ Almanac::pass_ranges_through_map(const std::vector<Interval>& ranges, const Alma
 
 std::vector<unsigned long> Almanac::final_p1_seeds_locations() const {
     auto seeds = seeds_old;
-    std::transform(cbegin(seeds), cend(seeds), begin(seeds), [&](auto &s) { return seed_to_location(s); });
+    std::ranges::transform(seeds, begin(seeds), [&](auto &s) { return seed_to_location(s); });
     return seeds;
 }

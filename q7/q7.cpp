@@ -4,7 +4,7 @@
 #include "Hand.h"
 #include "Utils.h"
 
-[[nodiscard]] const unsigned long calc_result(Part&& part, std::string_view str) {
+[[nodiscard]] unsigned long calc_result(Part&& part, std::string_view str) {
 
     std::ifstream data(str);
     if (!data.is_open()) {
@@ -13,7 +13,7 @@
 
     const auto hands_and_bids = [&](){
         auto hands_and_bids = parse(data, &part);
-        std::sort(begin(hands_and_bids), end(hands_and_bids), [&](const Hand_And_Bid& a, const Hand_And_Bid& b) {
+        std::ranges::sort(hands_and_bids, [&](const Hand_And_Bid& a, const Hand_And_Bid& b) {
             return part.compare(a.hand, b.hand);
         });
         return hands_and_bids;

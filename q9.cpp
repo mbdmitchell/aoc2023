@@ -43,16 +43,13 @@ template<typename T>
 
 std::vector<std::vector<int>> parse(std::string_view file_name) {
     std::ifstream data(file_name);
-    if (!data.is_open()) {
-        throw std::runtime_error("Unable to open file");
-    }
     return tokenize(vectorize<std::string>(data));
 }
 
 enum class End {FRONT, BACK};
 
 [[nodiscard]] int predict_next_num_in_sequence(std::vector<int> vec, End predicting) {
-    if (std::all_of(cbegin(vec), cend(vec), [&](const int num){ return vec[0] == num; })) {
+    if (std::ranges::all_of(vec, [&](const int num){ return vec[0] == num; })) {
         return vec[0];
     }
     else {

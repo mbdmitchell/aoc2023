@@ -44,11 +44,11 @@ IntVec str_to_int_vec(const StrVec& vec) {
 
 bool is_num_token(std::string_view token) {
     /// helper function for split_str_vec()
-    return std::all_of(cbegin(token), cend(token), [](const char c){ return isdigit(c); });
+    return std::ranges::all_of(token, isdigit);
 }
 
 CardWithStrVals split_str_vec(const StrVec& vec) {
-    const auto it = std::find_if_not(cbegin(vec), cend(vec), is_num_token);
+    const auto it = std::ranges::find_if_not(vec, is_num_token);
     const StrVec part1 = std::vector(cbegin(vec), it);
     const StrVec part2 = std::vector(it+1, cend(vec));
     return {part1, part2};
