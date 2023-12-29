@@ -345,11 +345,8 @@ unsigned part_2(Grid grid) {
     };
 
     std::vector<unsigned> scores(starting_beams.size());
-    std::transform(cbegin(starting_beams), cend(starting_beams), begin(scores), get_illuminated_squares);
-
-    unsigned max_squares = *std::ranges::max_element(scores);
-
-    return max_squares;
+    std::ranges::transform(starting_beams, begin(scores), get_illuminated_squares);
+    return *std::ranges::max_element(scores);
 }
 
 int main() {

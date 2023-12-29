@@ -30,7 +30,7 @@ RockMap tokenize(const std::vector<std::string> &lines_of_data) {
     for (const auto& line : lines_of_data) {
         const std::vector<char> tokens = [&](){
             std::vector<char> tokens;
-            std::copy(cbegin(line), cend(line), std::back_inserter(tokens));
+            std::ranges::copy(line, std::back_inserter(tokens));
             return tokens;
         }();
         tokenized_lines_of_data.push_back(tokens);
@@ -160,8 +160,8 @@ std::vector<Position> all_stable_stones(const RockMap& map, const Direction& til
     std::vector<Position> stones;
     stones.reserve(stable_stones.size() + edge_stones.size());
 
-    std::move(cbegin(stable_stones), cend(stable_stones), std::back_inserter(stones));
-    std::move(cbegin(edge_stones), cend(edge_stones), std::back_inserter(stones));
+    std::ranges::move(stable_stones, std::back_inserter(stones));
+    std::ranges::move(edge_stones, std::back_inserter(stones));
 
     return stones;
 }

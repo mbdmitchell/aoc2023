@@ -17,11 +17,11 @@ public:
     explicit InitializationStep(std::string_view str) : m_str{str} {}
 
     [[nodiscard]] std::string label_str() const {
-        auto end = std::find_if_not(cbegin(m_str), cend(m_str), isalpha);
+        auto end = std::ranges::find_if_not(m_str, isalpha);
         return {begin(m_str), end};
     }
     [[nodiscard]] Operation oper() const {
-        const auto it = std::find_if_not(cbegin(m_str), cend(m_str), isalpha);
+        const auto it = std::ranges::find_if_not(m_str, isalpha);
         switch (*it) {
             case '-': return Operation::DASH;
             case '=': return Operation::EQUAL;

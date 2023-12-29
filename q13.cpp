@@ -64,16 +64,14 @@ bool one_off_row_match(size_t row_ix_a, size_t row_ix_b, const AshRockMap& map) 
     const auto& row_a = map[row_ix_a];
     const auto& row_b = map[row_ix_b];
 
-    unsigned mismatchCount = 0;
-    for (size_t i = 0; i < row_a.size(); ++i) {
-        if (row_a[i] != row_b[i] && ++mismatchCount > 1) { // NB: ++mismatchCount iff row_a[i] != row_b[i] (early exit)
-            return false;
-        }
-    }
+    unsigned mismatchCount = std::inner_product(begin(row_a), end(row_a), begin(row_b), 0, std::plus<>(), [](char a, char b) {
+        return (a != b) ? 1 : 0;
+    });
+
     return mismatchCount == 1;
 }
 bool one_off_col_match(size_t col_ix_a, size_t col_ix_b, const AshRockMap& map) {
-    return std::count_if(cbegin(map), cend(map), [&](const auto& row) {
+    return std::ranges::count_if(map, [&](const auto& row) {
         return row[col_ix_a] != row[col_ix_b];
     }) == 1;
 }
@@ -101,13 +99,13 @@ bool is_horizontal_reflection(size_t starting_ix, const AshRockMap& map, unsigne
             else {
                 return false;
             }
+            --smudges_remaining;
         }
         --upper;
         ++lower;
     }
     return smudges_remaining == 0;
 }
-
 bool is_vertical_reflection(size_t starting_ix, const AshRockMap& map, unsigned smudges_remaining = 0) {
     size_t left = starting_ix-1;
     size_t right = starting_ix+2;
