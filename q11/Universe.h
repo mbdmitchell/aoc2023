@@ -10,7 +10,7 @@ private:
     MultiplierMap multiplier_map;
 
     static UniverseMap parse(std::string_view file_name);
-    void reserve_and_set_to_one();
+    void reserve_and_set();
     void process_column(size_t col);
     void init_multiplier_map();
     [[nodiscard]] unsigned calc_expansion_rows(Location src, Location dst) const;

@@ -9,12 +9,12 @@ UniverseMap Universe::parse(std::string_view file_name) {
     return m;
 }
 
-void Universe::reserve_and_set_to_one() {
+void Universe::reserve_and_set() {
     multiplier_map.reserve(universe_map.size());
     for (size_t row = 0; row < universe_map.size(); ++row) {
-        multiplier_map.emplace_back(); // Add a new row
+        multiplier_map.emplace_back();
         multiplier_map[row].reserve(universe_map[row].size());
-        multiplier_map[row].resize(universe_map[row].size(), 0); // Initialize to '1's
+        multiplier_map[row].resize(universe_map[row].size(), 0);
     }
 }
 
@@ -28,7 +28,7 @@ void Universe::process_column(size_t col) {
 }
 
 void Universe::init_multiplier_map() {
-    reserve_and_set_to_one();
+    reserve_and_set();
     for (size_t row = 0; row < universe_map.size(); ++row) {
         if (std::ranges::none_of(universe_map[row], [](const char c) { return c == '#'; })) {
             std::ranges::fill(multiplier_map[row], 1);
