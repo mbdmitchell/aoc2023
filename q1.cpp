@@ -21,9 +21,9 @@ template <typename Compare>
 Info n_most_digit_info(const std::string& row, Compare comp) {
     /// std::less<>() for leftmost, std::greater<>() for rightmost
 
-    auto max_digit = row.cend();
+    auto max_digit = cend(row);
 
-    for (auto it = row.begin(); it != row.end(); ++it) {
+    for (auto it = begin(row); it != end(row); ++it) {
         if (std::isdigit(*it, std::locale()) && (max_digit == row.end() || comp(it, max_digit))) {
             max_digit = it;
         }

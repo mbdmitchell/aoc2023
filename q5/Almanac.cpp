@@ -2,8 +2,7 @@
 
 std::vector<unsigned long> Almanac::calc_seeds_old() const {
     std::vector<unsigned long> seeds_long_vec;
-    std::transform(cbegin(tokenized_data[0]) + 1, cend(tokenized_data[0]),
-                   back_inserter(seeds_long_vec), [](const std::string& str) {
+    std::transform(cbegin(tokenized_data[0]) + 1, cend(tokenized_data[0]), back_inserter(seeds_long_vec), [](const std::string& str) {
         return str_to_num<unsigned long>(str);
     });
     return seeds_long_vec;

@@ -324,10 +324,8 @@ unsigned part_2(RockMap map) {
 }
 
 int main() {
-
     const RockMap map = parse("../rocks.txt");
     fmt::print("Part 1: {}\n", map);
     fmt::print("Part 2: {}\n", map);
-
     return 0;
 }

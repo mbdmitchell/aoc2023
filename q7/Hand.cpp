@@ -38,7 +38,7 @@ Hand::Kind Hand::calc_kind(const CardCount &highest, const CardCount &second_hig
 }
 
 Hand::Kind Hand::calc_kind(const Part *move_strategy) const {
-    const std::array<CardCount, 13> count = calc_card_count();
+    std::array<CardCount, 13> count = calc_card_count();
     return move_strategy->best_move(count);
 }
 

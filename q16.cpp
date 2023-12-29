@@ -13,7 +13,7 @@
 struct Location {
     gsl::index row, col;
     friend bool operator==(Location direction, Location other);
-    auto operator<=>(const Location& other) const { 
+    auto operator<=>(const Location& other) const {
         if (row != other.row) {
             return row <=> other.row;
         }
@@ -129,7 +129,7 @@ class Grid {
     }
 
     void move_beams_to_next_location() {
-    /// NB: happily moves to off-grid / invalid locations
+        /// NB: happily moves to off-grid / invalid locations
 
         std::vector<Beam> beams_from_split; // seperated to avoid changing beams.size() while iterating through
 
@@ -143,7 +143,7 @@ class Grid {
                 Beam left_beam = {beam.location + Direction::left(), Direction::left()};
                 Beam right_beam = {beam.location + Direction::right(), Direction::right()};
 
-                beams.erase(begin(beams) + i);            // remove original ... 
+                beams.erase(begin(beams) + i);            // remove original ...
                 beams_from_split.push_back(left_beam);    // and create two beams
                 beams_from_split.push_back(right_beam);
             }
@@ -157,7 +157,7 @@ class Grid {
                 Beam up_beam = {beam.location + Direction::up(), Direction::up()};
                 Beam down_beam = {beam.location + Direction::down(), Direction::down()};
 
-                beams.erase(begin(beams) + i);           // remove original ... 
+                beams.erase(begin(beams) + i);           // remove original ...
                 beams_from_split.push_back(up_beam);     // and create two beams
                 beams_from_split.push_back(down_beam);
             }
@@ -235,8 +235,8 @@ public:
     Grid(const std::vector<std::vector<Square>>& grid) : grid{grid} { }
 
     void init_illumination_process() {
-      
-        cache.clear();  
+
+        cache.clear();
         delluminate_all();
         remove_unecessary_beams();
 
@@ -264,7 +264,7 @@ public:
     }
 
     void set_starting_beam(const Beam& b){
-        beams.clear(); 
+        beams.clear();
         beams.push_back(b);
     }
 
@@ -351,7 +351,7 @@ unsigned part_2(Grid grid) {
 
 int main() {
     Grid grid = parse("../input.txt");
-    fmt::print("Part 1: {}\n", part_1(grid)); 
-    fmt::print("Part 2: {}\n", part_2(grid)); 
+    fmt::print("Part 1: {}\n", part_1(grid));
+    fmt::print("Part 2: {}\n", part_2(grid));
     return 0;
 }
